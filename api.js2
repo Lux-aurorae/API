@@ -1,0 +1,24 @@
+const API_KEY='9053e19d896a443fa62e864f6ad707f7';
+async function getNews(){
+let url= new URL('https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}');
+console.log("uuu",url);
+//URL 호출 : 인터넷세상에서 데이터(자료를)불러오는 것
+const response = await fetch(url)
+// 자바스크립트는 개발자가 필요로 하는 많은 함수들을 제공해줌
+// url 인스턴스라 하는데 URL에 필요한 함수와 변수들을 제공함
+// fetch(url)을 호출해서 어떻게 하겠다는 건지는 자바스크립트 기본원리에 대해서 알아야한다.
+// Java Script 기본원리, 위에서 아래로 작동한다.->동기적 프로그래밍,비동기적 프로그래밍
+// Java Scrip는  ㅡMemory Heap과 Call Stack으로 구성되며 한명의 쓰레드를 가진다.
+// Memory Heap는 변수의 지정한 곳으로 일종의 낙서장이며, Call Stack은 console.log로 하여금 출력이되는 곳인데, 특징이 있다.
+// LIFO : Last in First out으로 첫번째로 들어간 것이 나중에 나온다. 이렇듯 시간소요가 오래걸린 단점이 있다.
+// 이에 문제해결을 위해 조력자들이 나타난다. 웹브라우저와 Task Queue 이다. 다시말해 Java Script는 굉장히 느린언어이기 때문에 아웃소싱으로 브라우저와 헙업을 한다.
+// 브라우저에는 WEB API 라는 것이 있는데, 종류는 Ajax,Fetch: 네트워크 시간걸리는 문제해결, setTimeout: 기다리는 애들 문제해결, event handler: 클릭 이벤트 처리를 돕는다.
+// WEB API들은 Tsk queue에게 보내는데 Java의 Callstack인 아래로 부터 작업이 점점쌓이는 수직형 구조가 아닌 옆으로 작업이 쌓이는 수평형 구조로 온 순서대로 일을 처리한다.
+// EVENT LOOP은 브라우저와 Java 간의 가교역할로 일 처리를 도와주는 애이다.  
+console.log("rrr",response);
+}
+
+getNews();
+for (let i = 0; i < 20; i++) {
+    console.log("after",i);
+}
