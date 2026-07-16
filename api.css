@@ -1,189 +1,69 @@
 /* =====================================================
-   나의 할일 - UX 개선판 (style.css)
-   원칙: 누를 수 있는 건 크게 / 상태는 눈에 보이게 / 피드백은 즉시
+   ① 사이드 메뉴: "항상 있는데 너비가 0이라 안 보이는" 서랍
    ===================================================== */
+.side-menu {
+  height: 100%;
+  width: 0;                     /* ★ 평소엔 0 → 숨김 상태 */
+  position: fixed;              /* 화면에 고정 */
+  z-index: 1;                   /* 다른 내용 위에 겹치게 */
+  top: 0;
+  left: 0;
+  background-color: burlywood;
+  overflow-x: hidden;           /* 너비 0일 때 내용물 삐져나옴 방지 */
+  transition: 0.5s;             /* ★ 너비 변화를 스르륵 애니메이션으로 */
+  padding-top: 60px;
+}
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-  font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
-  background: #f6f4ef;
-  min-height: 100vh;
+.side-menu-list {
   display: flex;
-  justify-content: center;
-  padding: 32px 16px;
-  color: #333;
+  flex-direction: column;       /* 버튼들을 세로로 쌓기 */
+  align-items: center;
 }
 
-.container { width: 100%; max-width: 480px; }
-
-h1 { margin-bottom: 18px; }
-
-/* ---------- ① 입력 영역 ---------- */
-.input-row { display: flex; gap: 8px; }
-
-#task-input {
-  flex: 1;
-  padding: 14px 16px;
-  font-size: 16px;              /* ★UX: 16px 미만이면 아이폰이 화면 강제 확대 */
-  border: 2px solid #ddd;
-  border-radius: 12px;
-  background: #fff;
-  transition: border-color 0.2s;
-}
-#task-input:focus {
-  outline: none;
-  border-color: #f0a04b;        /* ★UX: 지금 입력 중이라는 시각 신호 */
-}
-
-#add-button {
-  width: 54px;
-  min-height: 48px;             /* ★UX: 터치 최소 권장 크기(44px 이상) 확보 */
-  font-size: 26px;
-  border: none;
-  border-radius: 12px;
-  background: #f0a04b;
-  color: #fff;
-  cursor: pointer;
-  transition: transform 0.1s, background 0.15s;
-}
-#add-button:hover { background: #e08f38; }
-#add-button:active { transform: scale(0.93); }   /* ★UX: 눌렀다는 촉감 피드백 */
-
-/* ★UX: 빈 값 경고 문구 (평소엔 공간만 차지, 경고 시 빨간 글씨) */
-.input-warning {
-  min-height: 20px;             /* 문구가 생겨도 화면이 안 밀리게 자리 예약 */
-  font-size: 13px;
-  color: #d64545;
-  margin: 6px 4px 14px;
-}
-
-/* ★UX: 빈 값일 때 입력창이 살짝 흔들리는 효과 */
-.shake { animation: shake 0.3s; border-color: #d64545 !important; }
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25%      { transform: translateX(-5px); }
-  75%      { transform: translateX(5px); }
-}
-
-/* ---------- ② 탭 + 개수 뱃지 ---------- */
-#tab-menu {
-  position: relative;
-  display: flex;
-  border-bottom: 2px solid #e3ddd0;
-  margin-bottom: 16px;
-}
-
-.tab {
-  flex: 1;
-  padding: 13px 0;
-  min-height: 48px;             /* ★UX: 손가락 터치 영역 확보 */
-  font-size: 15px;
+.side-menu-list button {
+  margin: 5px;
   border: none;
   background: none;
-  color: #9a9284;
-  cursor: pointer;
+  width: 120px;
 }
-.tab.active { color: #333; font-weight: bold; }
 
-/* ★UX: 몇 개인지 열어보지 않아도 보이는 개수 뱃지 */
-.count {
-  display: inline-block;
-  min-width: 22px;
-  padding: 2px 6px;
-  margin-left: 2px;
-  font-size: 12px;
-  border-radius: 11px;
-  background: #e9e2d3;
-  color: #6f6754;
+.side-menu-list button:hover {
+  background-color: beige;
+  border-radius: 3px;
 }
-.tab.active .count { background: #f0a04b; color: #fff; }
 
-#under-bar {
+.side-menu .closebtn {          /* × 닫기 버튼 */
   position: absolute;
-  bottom: -2px;
-  left: 0;
-  height: 3px;
-  width: 0;
-  background: #f0a04b;
-  transition: left 0.25s ease, width 0.25s ease;
-}
-
-/* ---------- ③ 할일 카드 ---------- */
-.task-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background: #fff;
-  border-radius: 12px;
-  padding: 8px 10px;
-  margin-bottom: 10px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-  animation: slideIn 0.25s ease;          /* ★UX: 새 할일이 스르륵 등장 */
-}
-@keyframes slideIn {
-  from { opacity: 0; transform: translateY(-8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* ★UX: 체크는 글자 버튼 대신 '동그라미 체크박스' — 직관적! */
-.check-btn {
-  width: 44px;
-  height: 44px;
-  flex-shrink: 0;
-  font-size: 18px;
-  border: 2px solid #d8d2c4;
-  border-radius: 50%;
-  background: #fff;
-  color: transparent;            /* 미완료: 빈 동그라미 */
-  cursor: pointer;
-  transition: all 0.15s;
-}
-.check-btn:hover { border-color: #f0a04b; }
-.task-row.done .check-btn {
-  background: #7bc47f;           /* 완료: 초록 채움 + 체크 표시 */
-  border-color: #7bc47f;
-  color: #fff;
-}
-
-.task-text {
-  flex: 1;
-  font-size: 16px;
-  word-break: break-all;         /* ★UX: 긴 할일도 카드 밖으로 안 삐져나감 */
-  transition: color 0.2s;
-}
-.task-row.done .task-text {
-  text-decoration: line-through;
-  color: #b5ad9d;
-}
-
-.delete-btn {
-  width: 44px;
-  height: 44px;
-  flex-shrink: 0;
-  font-size: 16px;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
   border: none;
-  border-radius: 10px;
-  background: transparent;
+  background: none;
+}
+
+/* =====================================================
+   ② 상단 바: 햄버거 + 검색
+   ===================================================== */
+.icon-button {
+  font-size: 22px;
   cursor: pointer;
-  opacity: 0.55;
-  transition: opacity 0.15s, background 0.15s;
+  margin: 10px;
 }
-.delete-btn:hover { opacity: 1; background: #fdecec; }
 
-/* ---------- ★UX: 빈 상태 안내 (아무것도 없을 때) ---------- */
-.empty-state {
-  text-align: center;
-  padding: 44px 10px;
-  color: #b0a892;
-  font-size: 15px;
-  line-height: 1.7;
+#input-area {
+  display: none;                /* ★ 검색창도 평소엔 숨김 → JS가 토글 */
 }
-.empty-state .big { font-size: 40px; display: block; margin-bottom: 8px; }
 
-/* ---------- 모바일 반응형 ---------- */
-@media (max-width: 480px) {
-  body { padding: 20px 12px; }
-  h1 { font-size: 22px; }
-  .tab { font-size: 14px; }
+/* =====================================================
+   ③ 뉴스 카드
+   ===================================================== */
+.news {
+  margin: 20px 0;
+  padding: 15px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.news-img-size {
+  width: 100%;                  /* 칸(col-lg-4)에 맞춰 이미지 크기 조절 */
+  border-radius: 6px;
 }
