@@ -19,9 +19,41 @@
     />
     <!-- ★ 수정①: rel="style/sheets" → rel="stylesheet"
          (이 오타 때문에 api.css가 통째로 무시되고 있었음!) -->
+    <!-- ★ 아이콘 라이브러리: fa-bars(햄버거), fa-search(돋보기)가 이게 없으면 빈 네모! -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
     <link rel="stylesheet" href="api.css" />
   </head>
   <body>
+    <!-- ================= 사이드 메뉴 (햄버거로 열리는 서랍) ================= -->
+    <div class="side-menu" id="mySidenav">
+      <button class="closebtn" onclick="closeNav()">&times;</button>
+      <div class="side-menu-list" id="menu-list">
+        <button>Business</button>
+        <button>Entertainment</button>
+        <button>General</button>
+        <button>Health</button>
+        <button>Science</button>
+        <button>Sports</button>
+        <button>Technology</button>
+      </div>
+    </div>
+
+    <!-- ================= 상단 바: 햄버거 + 검색 ================= -->
+    <nav class="top-bar">
+      <i class="fas fa-bars icon-button" onclick="openNav()"></i>
+
+      <span class="search-wrap">
+        <span id="input-area">
+          <input type="text" id="search-input" placeholder="search" />
+          <button class="search-button" onclick="searchNews()">Go</button>
+        </span>
+        <i class="fas fa-search icon-button" onclick="openSearchBox()"></i>
+      </span>
+    </nav>
+
     <section class="container">
       <section>
         <div class="head-line">
