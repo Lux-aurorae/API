@@ -1,3 +1,4 @@
+HTML
 <!doctype html>
 <html lang="en">
   <head>
@@ -162,3 +163,82 @@ PokerFace * 2026-12-12
     <script src="api.js"></script>
   </body>
 </html>
+
+CSS
+.head-line{
+    margin-top: 1em;
+    display: flex;
+    justify-content:center;
+}
+.head-line svg {
+width:430px;
+}
+
+.menus {
+ margin-top: 1em;
+ display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  border-top:1px solid indigo;
+  border-bottom: 4px double indianred
+
+}
+
+.menus button{
+    border:none;
+    background: none;
+    margin: 5px;
+}
+
+.menus button:hover{
+    background-color: ivory;
+}
+.news-img-size{
+    max: width 100%;
+    max-height: 250px;
+}
+.news{
+    boder-bottom: 2px solid indigo;
+}
+
+JS
+let newsList = [];
+// news Array를 newsList로 변경 (즉,news를 모두 newsList로 변경)
+const PAGE_SIZE = 10;  
+
+const getLatestNews = async () => {
+  let url = new URL(
+    `https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?q=아이유&pageSize=${PAGE_SIZE}`
+  );
+
+  const response = await fetch(url); 
+  const data = await response.json();  
+
+  newsList = data.articles;
+  // 가만히 바뀌지 않는 이유는 함수를 불러오지 않아서임! 
+  render();
+  // 함수를 불러오자!           
+  console.log("뉴스 데이터:", newsList);
+};
+
+const render=()=>{
+  const newsHTML = 'newsList.map(news=>'<div class="row news">
+    <div class="col-lg-4"
+<img class="news-img-size"
+src=${news.urlToImage}/>
+<div class=""col-lg-8">
+<h2>${news.title}</h2>
+    <p>
+${news.description}
+    </p>
+<div>
+${news.source.name} * ${news.publishedAt}
+</div>
+</div>').join('');
+  console.log("html",newsHTML);
+ 
+
+  document.getElementById("news-board").innerHTML=newsHTML;
+};
+
+getLatestNews();
