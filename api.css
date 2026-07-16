@@ -1,290 +1,189 @@
 /* =====================================================
-   고급 신문 에디토리얼 스타일 (api.css)
-   컨셉: 클래식 종이 신문 + 현대적 디테일
+   나의 할일 - UX 개선판 (style.css)
+   원칙: 누를 수 있는 건 크게 / 상태는 눈에 보이게 / 피드백은 즉시
    ===================================================== */
 
-/* ---------- 디자인 토큰: 색과 서체를 변수로 ---------- */
-:root {
-  --paper: #faf7f1;          /* 미색 종이 */
-  --ink: #1a1815;            /* 잉크 블랙 */
-  --ink-soft: #57524a;       /* 옅은 잉크 (본문/메타) */
-  --accent: #8b1e2d;         /* 딥 크림슨 (포인트) */
-  --rule: #d8d2c6;           /* 괘선(hairline) 색 */
-  --serif-en: 'Playfair Display', serif;
-  --serif-kr: 'Noto Serif KR', serif;
-  --sans: 'Noto Sans KR', sans-serif;
-}
-
-* { box-sizing: border-box; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  margin: 0;
-  background: var(--paper);
-  color: var(--ink);
-  font-family: var(--sans);
-  font-weight: 300;
-  /* 종이의 미세한 결: 아주 옅은 줄무늬 텍스처 */
-  background-image: repeating-linear-gradient(
-    0deg, transparent, transparent 3px, rgba(0,0,0,0.008) 3px, rgba(0,0,0,0.008) 4px
-  );
-}
-
-/* =====================================================
-   상단 유틸 바
-   ===================================================== */
-.top-bar {
+  font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+  background: #f6f4ef;
+  min-height: 100vh;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 22px;
-  border-bottom: 1px solid var(--rule);
-  position: sticky;           /* 스크롤해도 상단에 붙어있음 */
-  top: 0;
-  background: rgba(250, 247, 241, 0.92);
-  backdrop-filter: blur(6px); /* 뒤가 살짝 비치는 고급 효과 */
-  z-index: 5;
+  justify-content: center;
+  padding: 32px 16px;
+  color: #333;
 }
 
-.icon-button {
-  font-size: 18px;
-  cursor: pointer;
-  color: var(--ink);
-  transition: color 0.2s;
+.container { width: 100%; max-width: 480px; }
+
+h1 { margin-bottom: 18px; }
+
+/* ---------- ① 입력 영역 ---------- */
+.input-row { display: flex; gap: 8px; }
+
+#task-input {
+  flex: 1;
+  padding: 14px 16px;
+  font-size: 16px;              /* ★UX: 16px 미만이면 아이폰이 화면 강제 확대 */
+  border: 2px solid #ddd;
+  border-radius: 12px;
+  background: #fff;
+  transition: border-color 0.2s;
 }
-.icon-button:hover { color: var(--accent); }
-
-.top-bar-date {
-  font-size: 12px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--ink-soft);
-}
-
-/* 검색창: 평소엔 숨김, 열리면 밑줄만 있는 미니멀 입력창 */
-.search-wrap { display: flex; align-items: center; gap: 10px; }
-
-#input-area { display: none; }
-
-#search-input {
-  border: none;
-  border-bottom: 1px solid var(--ink);
-  background: transparent;
-  font-family: var(--sans);
-  font-size: 14px;
-  padding: 4px 2px;
-  width: 180px;
+#task-input:focus {
   outline: none;
+  border-color: #f0a04b;        /* ★UX: 지금 입력 중이라는 시각 신호 */
 }
 
-.search-button {
-  border: 1px solid var(--ink);
-  background: var(--ink);
-  color: var(--paper);
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  padding: 5px 14px;
+#add-button {
+  width: 54px;
+  min-height: 48px;             /* ★UX: 터치 최소 권장 크기(44px 이상) 확보 */
+  font-size: 26px;
+  border: none;
+  border-radius: 12px;
+  background: #f0a04b;
+  color: #fff;
   cursor: pointer;
-  transition: background 0.2s, color 0.2s;
+  transition: transform 0.1s, background 0.15s;
 }
-.search-button:hover { background: var(--accent); border-color: var(--accent); }
+#add-button:hover { background: #e08f38; }
+#add-button:active { transform: scale(0.93); }   /* ★UX: 눌렀다는 촉감 피드백 */
 
-/* =====================================================
-   제호 (Masthead) — 신문의 얼굴
-   ===================================================== */
-.masthead {
-  text-align: center;
-  padding: 42px 16px 0;
-}
-
-.masthead-title {
-  font-family: var(--serif-en);
-  font-weight: 900;
-  font-size: clamp(44px, 9vw, 92px);
-  letter-spacing: 0.02em;
-  margin: 0;
-  line-height: 1;
+/* ★UX: 빈 값 경고 문구 (평소엔 공간만 차지, 경고 시 빨간 글씨) */
+.input-warning {
+  min-height: 20px;             /* 문구가 생겨도 화면이 안 밀리게 자리 예약 */
+  font-size: 13px;
+  color: #d64545;
+  margin: 6px 4px 14px;
 }
 
-.masthead-slogan {
-  font-family: var(--serif-en);
-  font-style: italic;
-  font-size: 14px;
-  color: var(--ink-soft);
-  margin: 10px 0 18px;
+/* ★UX: 빈 값일 때 입력창이 살짝 흔들리는 효과 */
+.shake { animation: shake 0.3s; border-color: #d64545 !important; }
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25%      { transform: translateX(-5px); }
+  75%      { transform: translateX(5px); }
 }
 
-/* 클래식 신문의 이중 괘선 */
-.masthead-rule {
-  max-width: 1080px;
-  margin: 0 auto;
-  border-top: 3px solid var(--ink);
-  border-bottom: 1px solid var(--ink);
-  height: 5px;
+/* ---------- ② 탭 + 개수 뱃지 ---------- */
+#tab-menu {
+  position: relative;
+  display: flex;
+  border-bottom: 2px solid #e3ddd0;
+  margin-bottom: 16px;
 }
 
-/* =====================================================
-   뉴스 목록
-   ===================================================== */
-.news-container { max-width: 1080px; padding: 34px 20px 60px; }
+.tab {
+  flex: 1;
+  padding: 13px 0;
+  min-height: 48px;             /* ★UX: 손가락 터치 영역 확보 */
+  font-size: 15px;
+  border: none;
+  background: none;
+  color: #9a9284;
+  cursor: pointer;
+}
+.tab.active { color: #333; font-weight: bold; }
 
-/* ---------- 첫 기사: 히어로(대형) 처리 ---------- */
-.hero {
-  margin-bottom: 40px;
-  padding-bottom: 36px;
-  border-bottom: 1px solid var(--rule);
+/* ★UX: 몇 개인지 열어보지 않아도 보이는 개수 뱃지 */
+.count {
+  display: inline-block;
+  min-width: 22px;
+  padding: 2px 6px;
+  margin-left: 2px;
+  font-size: 12px;
+  border-radius: 11px;
+  background: #e9e2d3;
+  color: #6f6754;
+}
+.tab.active .count { background: #f0a04b; color: #fff; }
+
+#under-bar {
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  height: 3px;
+  width: 0;
+  background: #f0a04b;
+  transition: left 0.25s ease, width 0.25s ease;
 }
 
-.hero .news-img-frame { margin-bottom: 20px; }
-
-.hero h2 {
-  font-family: var(--serif-kr);
-  font-weight: 700;
-  font-size: clamp(24px, 4vw, 38px);
-  line-height: 1.35;
-  margin: 8px 0 12px;
+/* ---------- ③ 할일 카드 ---------- */
+.task-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 8px 10px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  animation: slideIn 0.25s ease;          /* ★UX: 새 할일이 스르륵 등장 */
+}
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ---------- 일반 기사 카드 ---------- */
-.news {
-  margin: 0 0 34px;
-  padding-bottom: 30px;
-  border-bottom: 1px solid var(--rule);
+/* ★UX: 체크는 글자 버튼 대신 '동그라미 체크박스' — 직관적! */
+.check-btn {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  font-size: 18px;
+  border: 2px solid #d8d2c4;
+  border-radius: 50%;
+  background: #fff;
+  color: transparent;            /* 미완료: 빈 동그라미 */
+  cursor: pointer;
+  transition: all 0.15s;
 }
-.news:last-child { border-bottom: none; }
+.check-btn:hover { border-color: #f0a04b; }
+.task-row.done .check-btn {
+  background: #7bc47f;           /* 완료: 초록 채움 + 체크 표시 */
+  border-color: #7bc47f;
+  color: #fff;
+}
 
-.news h2 {
-  font-family: var(--serif-kr);
-  font-weight: 600;
-  font-size: 21px;
-  line-height: 1.4;
-  margin: 6px 0 10px;
+.task-text {
+  flex: 1;
+  font-size: 16px;
+  word-break: break-all;         /* ★UX: 긴 할일도 카드 밖으로 안 삐져나감 */
   transition: color 0.2s;
 }
-.news:hover h2 { color: var(--accent); }   /* 마우스 올리면 제목이 크림슨으로 */
-
-/* 이미지: 액자 프레임 + 은은한 줌 인 효과 */
-.news-img-frame {
-  overflow: hidden;                /* 확대된 부분을 액자 밖으로 안 새게 */
-  background: #e7e1d5;
+.task-row.done .task-text {
+  text-decoration: line-through;
+  color: #b5ad9d;
 }
 
-.news-img-size {
-  width: 100%;
-  aspect-ratio: 16 / 10;           /* 사진 비율 통일 → 정돈된 레이아웃 */
-  object-fit: cover;
-  display: block;
-  filter: saturate(0.92);          /* 채도를 살짝 눌러 차분하게 */
-  transition: transform 0.6s ease;
-}
-.news:hover .news-img-size,
-.hero:hover .news-img-size { transform: scale(1.04); }  /* 스르륵 줌 */
-
-/* 카테고리 라벨: 작은 대문자 + 크림슨 */
-.news-category {
-  display: inline-block;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--accent);
-  border-bottom: 2px solid var(--accent);
-  padding-bottom: 2px;
-  margin-bottom: 6px;
-}
-
-.news p {
-  color: var(--ink-soft);
-  font-size: 15px;
-  line-height: 1.75;
-  margin: 0 0 12px;
-}
-
-/* 출처 · 날짜 메타 정보 */
-.news-meta {
-  font-size: 12px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--ink-soft);
-}
-.news-meta b { color: var(--ink); font-weight: 500; }
-
-/* =====================================================
-   사이드 메뉴 — 잉크색 서랍
-   ===================================================== */
-.side-menu {
-  height: 100%;
-  width: 0;                         /* 평소엔 0 = 숨김 */
-  position: fixed;
-  z-index: 10;
-  top: 0;
-  left: 0;
-  background: var(--ink);
-  overflow-x: hidden;
-  transition: width 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-  padding-top: 70px;
-}
-
-.side-menu-label {
-  color: #8f887c;
-  font-size: 11px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  text-align: center;
-  margin-bottom: 14px;
-  white-space: nowrap;
-}
-
-.side-menu-list {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.side-menu-list button {
-  margin: 3px;
-  border: none;
-  background: none;
-  width: 170px;
-  padding: 9px 0;
-  color: var(--paper);
-  font-family: var(--serif-en);
+.delete-btn {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
   font-size: 16px;
-  letter-spacing: 0.04em;
-  cursor: pointer;
-  transition: color 0.2s, letter-spacing 0.2s;
-  white-space: nowrap;
-}
-
-.side-menu-list button:hover {
-  color: #e8b7b7;
-  letter-spacing: 0.12em;           /* 호버 시 글자 사이가 살짝 벌어지는 디테일 */
-}
-
-.side-menu .closebtn {
-  position: absolute;
-  top: 12px;
-  right: 22px;
-  font-size: 34px;
   border: none;
-  background: none;
-  color: var(--paper);
+  border-radius: 10px;
+  background: transparent;
   cursor: pointer;
+  opacity: 0.55;
+  transition: opacity 0.15s, background 0.15s;
 }
+.delete-btn:hover { opacity: 1; background: #fdecec; }
 
-/* =====================================================
-   푸터 & 모바일
-   ===================================================== */
-.site-footer {
+/* ---------- ★UX: 빈 상태 안내 (아무것도 없을 때) ---------- */
+.empty-state {
   text-align: center;
-  padding: 0 16px 40px;
-  color: var(--ink-soft);
-  font-size: 12px;
-  letter-spacing: 0.1em;
+  padding: 44px 10px;
+  color: #b0a892;
+  font-size: 15px;
+  line-height: 1.7;
 }
-.site-footer p { margin-top: 16px; }
+.empty-state .big { font-size: 40px; display: block; margin-bottom: 8px; }
 
-@media (max-width: 576px) {
-  .top-bar-date { display: none; }   /* 좁은 화면에선 날짜 숨김 */
-  #search-input { width: 120px; }
-  .news h2 { font-size: 19px; }
+/* ---------- 모바일 반응형 ---------- */
+@media (max-width: 480px) {
+  body { padding: 20px 12px; }
+  h1 { font-size: 22px; }
+  .tab { font-size: 14px; }
 }

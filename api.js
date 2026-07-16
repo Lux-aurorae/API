@@ -1,162 +1,165 @@
 // =====================================================
-// donghui TIMES (api.js)
-// 이번 버전의 핵심 3가지:
-//   ① null 방어: 내용없음 / No Image / no source
-//   ② moment.js: "3시간 전" + 서울 시간(KST) 표기
-//   ③ 첫 기사는 히어로(대형), 나머지는 그리드
-// ⚠️ 필드명 주의: 누나 API는 description / urlToImage /
-//    source.name / publishedAt 을 사용합니다!
-//    (강의 예시의 summary/media/rights는 다른 API 기준)
+// 나의 할일 - UX 개선판 (script.js)
+// 로직 뼈대는 기본형과 동일 (배열 → render)
+// ★ 표시 = UX를 위해 새로 추가된 부분
 // =====================================================
 
-let newsList = [];
-const PAGE_SIZE = 10;
-const BASE_URL = "https://noona-times-be-5ca9402f90d9.herokuapp.com";
+// ---------- 요소 가져오기 ----------
+const taskInput = document.getElementById("task-input");
+const addButton = document.getElementById("add-button");
+const taskBoard = document.getElementById("task-board");
+const tabs = document.querySelectorAll(".tab");
+const underBar = document.getElementById("under-bar");
+const inputWarning = document.getElementById("input-warning");   // ★
+const countAll = document.getElementById("count-all");           // ★
+const countIng = document.getElementById("count-ing");           // ★
+const countDone = document.getElementById("count-done");         // ★
 
-// 사진이 없을 때 대신 보여줄 이미지 (상수로 분리 → 나중에 교체도 한 줄)
-const NO_IMAGE_URL =
-  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqEWgS0uxxEYJ0PsOb2OgwyWvC0Gjp8NUdPw&usqp=CAU";
+// ---------- 데이터 ----------
+let taskList = [];
+let currentTab = "all";
 
-// moment 한국어 모드: fromNow()가 "3시간 전"처럼 한국어로 나옴
-moment.locale("ko");
-
-// ---------- 상단 바에 오늘 날짜 표시 (신문 느낌은 영문 날짜!) ----------
-document.getElementById("today-date").textContent =
-  moment().locale("en").format("dddd, MMMM D, YYYY");
-
-// =====================================================
-// null 방어 도우미 함수들
-// render 안에 삼항연산자를 길게 넣으면 읽기 어려우니
-// '이름 있는 함수'로 분리 → render가 깨끗해짐!
-// =====================================================
-
-// ① 요약글: 없으면 "내용없음", 200자 넘으면 잘라서 "..." 붙이기
-const getDescription = (news) => {
-  if (news.description == null || news.description === "") {
-    return "내용없음";
-  }
-  if (news.description.length > 200) {
-    return news.description.substring(0, 200) + "...";  // 0~199자까지 자르기
-  }
-  return news.description;
-};
-
-// ② 사진: 없으면 No Image 대체 이미지
-//    || 는 "왼쪽이 비어있으면(null/undefined/"") 오른쪽을 써라"
-const getImage = (news) => {
-  return news.urlToImage || NO_IMAGE_URL;
-};
-
-// ③ 출처: 없으면 "no source"
-const getSource = (news) => {
-  return news.source.name || "no source";
-};
-
-// ④ 시간: moment로 "n시간 전" 표기
-const getTimeAgo = (news) => {
-  return moment(news.publishedAt).fromNow();   // 예: "2년 전", "3시간 전"
-};
-
-// ⑤ 정확한 날짜: 서울 시간(KST) 기준으로 풀어서 (히어로 기사용)
-const getFullDate = (news) => {
-  return moment(news.publishedAt)
-    .tz("Asia/Seoul")                          // 시간대를 한국으로 변환
-    .format("YYYY년 M월 D일 dddd A h:mm");     // 예: 2024년 2월 17일 토요일 오전 11:34
-};
-
-// =====================================================
-// 뉴스 가져오기
-// =====================================================
-const getLatestNews = async () => {
-  const url = new URL(`${BASE_URL}/top-headlines?q=아이유&pageSize=${PAGE_SIZE}`);
-
-  const response = await fetch(url);
-  const data = await response.json();
-
-  newsList = data.articles;
-  render();
-  console.log("뉴스 데이터:", newsList);
-};
-
-// =====================================================
-// 화면 그리기: [0]번 기사는 히어로, 나머지는 그리드
-// =====================================================
-const render = () => {
-  // 기사가 하나도 없을 때의 방어 (검색 결과 0건 대비)
-  if (newsList.length === 0) {
-    document.getElementById("news-board").innerHTML =
-      `<p class="news-meta" style="text-align:center; padding:40px 0;">
-        기사가 없습니다.
-      </p>`;
+// ---------- ① 할일 추가 ----------
+function addTask() {
+  // ★UX: 빈 값이면 '왜 안 되는지' 알려주고 + 입력창을 살짝 흔들기
+  if (taskInput.value.trim() === "") {
+    inputWarning.textContent = "할일을 입력해주세요!";
+    taskInput.classList.add("shake");
+    // 흔들림 애니메이션이 끝나면 클래스 제거 (다음에 또 흔들 수 있게)
+    setTimeout(function () { taskInput.classList.remove("shake"); }, 350);
     return;
   }
 
-  // ---------- 히어로: 첫 번째 기사만 크게 ----------
-  const first = newsList[0];
-  const heroHTML = `
-    <article class="hero row">
-      <div class="col-lg-7">
-        <div class="news-img-frame">
-          <img class="news-img-size" src="${getImage(first)}" />
-        </div>
-      </div>
-      <div class="col-lg-5">
-        <span class="news-category">Top Story</span>
-        <h2>${first.title}</h2>
-        <p>${getDescription(first)}</p>
-        <div class="news-meta">
-          <b>${getSource(first)}</b> · ${getFullDate(first)}
-        </div>
-      </div>
-    </article>
-  `;
+  inputWarning.textContent = "";   // ★ 경고 지우기
 
-  // ---------- 나머지 기사들: slice(1)로 두 번째부터 ----------
-  const restHTML = newsList.slice(1).map(news => `
-    <article class="news row">
-      <div class="col-lg-4">
-        <div class="news-img-frame">
-          <img class="news-img-size" src="${getImage(news)}" />
-        </div>
-      </div>
-      <div class="col-lg-8">
-        <h2>${news.title}</h2>
-        <p>${getDescription(news)}</p>
-        <div class="news-meta">
-          <b>${getSource(news)}</b> · ${getTimeAgo(news)}
-        </div>
-      </div>
-    </article>
-  `).join('');
+  const task = {
+    id: Date.now(),
+    content: taskInput.value.trim(),
+    isComplete: false
+  };
 
-  document.getElementById("news-board").innerHTML = heroHTML + restHTML;
-};
+  taskList.push(task);
+  taskInput.value = "";
+  taskInput.focus();               // ★UX: 연속 입력이 끊기지 않게 커서 유지
+  render();
+}
 
-// =====================================================
-// 사이드 메뉴 & 검색창
-// =====================================================
-const openNav = () => {
-  document.getElementById("mySidenav").style.width = "260px";
-};
-
-const closeNav = () => {
-  document.getElementById("mySidenav").style.width = "0";
-};
-
-const openSearchBox = () => {
-  const inputArea = document.getElementById("input-area");
-  if (inputArea.style.display === "inline") {
-    inputArea.style.display = "none";
-  } else {
-    inputArea.style.display = "inline";
-    document.getElementById("search-input").focus();  // 열리면 바로 입력 가능
+// ---------- ② 완료 ↔ 되돌리기 (토글) ----------
+function toggleComplete(id) {
+  for (let i = 0; i < taskList.length; i++) {
+    if (taskList[i].id === id) {
+      taskList[i].isComplete = !taskList[i].isComplete;
+      break;
+    }
   }
-};
+  render();
+}
 
-const searchNews = () => {
-  console.log("검색어:", document.getElementById("search-input").value);
-  // 다음 단계: 이 검색어로 q= 를 바꿔 다시 호출하게 됩니다!
-};
+// ---------- ③ 삭제 ----------
+function deleteTask(id) {
+  taskList = taskList.filter(function (task) {
+    return task.id !== id;
+  });
+  render();
+}
+
+// ---------- ★ 탭 개수 뱃지 갱신 ----------
+function renderCounts() {
+  countAll.textContent = taskList.length;
+  countIng.textContent = taskList.filter(function (t) { return !t.isComplete; }).length;
+  countDone.textContent = taskList.filter(function (t) { return t.isComplete; }).length;
+}
+
+// ---------- ④ 화면 그리기 ----------
+function render() {
+  // 1) 탭에 맞는 목록 고르기
+  let list = [];
+  if (currentTab === "all") {
+    list = taskList;
+  } else if (currentTab === "ing") {
+    list = taskList.filter(function (t) { return t.isComplete === false; });
+  } else if (currentTab === "done") {
+    list = taskList.filter(function (t) { return t.isComplete === true; });
+  }
+
+  // ★UX: 보여줄 게 없으면 '빈 상태 안내' 표시 (빈 화면은 고장처럼 보임!)
+  if (list.length === 0) {
+    let emptyMessage = "";
+    if (currentTab === "all") emptyMessage = "아직 할일이 없어요.<br>첫 할일을 추가해보세요!";
+    if (currentTab === "ing") emptyMessage = "진행중인 할일이 없어요.<br>모두 끝내셨네요! 👏";
+    if (currentTab === "done") emptyMessage = "완료된 할일이 아직 없어요.";
+
+    taskBoard.innerHTML = `
+      <div class="empty-state">
+        <span class="big">🗒️</span>
+        ${emptyMessage}
+      </div>
+    `;
+    renderCounts();
+    return;   // 빈 상태를 그렸으니 여기서 종료
+  }
+
+  // 2) HTML 조립
+  let resultHTML = "";
+  for (let i = 0; i < list.length; i++) {
+    resultHTML += `
+      <div class="task-row ${list[i].isComplete ? "done" : ""}">
+        <button class="check-btn"
+                onclick="toggleComplete(${list[i].id})"
+                title="${list[i].isComplete ? "되돌리기" : "완료하기"}">✔</button>
+        <span class="task-text">${list[i].content}</span>
+        <button class="delete-btn"
+                onclick="deleteTask(${list[i].id})"
+                title="삭제">🗑️</button>
+      </div>
+    `;
+  }
+
+  taskBoard.innerHTML = resultHTML;
+  renderCounts();   // ★ 그릴 때마다 개수 뱃지도 함께 갱신
+}
+
+// ---------- ⑤ 탭 전환 + 언더바 ----------
+function switchTab(event) {
+  // ★ 뱃지(span)를 클릭해도 탭이 눌리게: 실제 버튼을 찾아 올라감
+  const clickedTab = event.target.closest(".tab");
+  if (!clickedTab) return;
+
+  if (clickedTab.id === "tab-all") currentTab = "all";
+  if (clickedTab.id === "tab-ing") currentTab = "ing";
+  if (clickedTab.id === "tab-done") currentTab = "done";
+
+  for (let i = 0; i < tabs.length; i++) {
+    tabs[i].classList.remove("active");
+  }
+  clickedTab.classList.add("active");
+
+  underBar.style.left = clickedTab.offsetLeft + "px";
+  underBar.style.width = clickedTab.offsetWidth + "px";
+
+  render();
+}
+
+// ---------- 이벤트 연결 ----------
+addButton.addEventListener("click", addTask);
+
+// ★UX: Enter 키로도 추가 (마우스로 + 누르러 가는 수고 절약)
+taskInput.addEventListener("keydown", function (event) {
+  if (event.key === "Enter") addTask();
+});
+
+// ★UX: 입력을 다시 시작하면 경고 문구 자동으로 지움
+taskInput.addEventListener("input", function () {
+  inputWarning.textContent = "";
+});
+
+for (let i = 0; i < tabs.length; i++) {
+  tabs[i].addEventListener("click", switchTab);
+}
 
 // ---------- 시작 ----------
-getLatestNews();
+tabs[0].classList.add("active");
+underBar.style.left = tabs[0].offsetLeft + "px";
+underBar.style.width = tabs[0].offsetWidth + "px";
+taskInput.focus();    // ★UX: 페이지 열리자마자 바로 입력 가능
+render();
