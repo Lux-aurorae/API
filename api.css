@@ -1,231 +1,118 @@
 /* =====================================================
-   Dong hui (api.css) - 세련된 신문 에디토리얼 버전
-   ★ 표시 = 원래 코드에서 틀렸던 부분의 수정
+   Lux TIMES (api.css)
+   Lux 테마 위에 얹는 커스텀 다듬기
+   (큰 스타일은 Lux가 담당, 여기선 디테일만!)
    ===================================================== */
 
-/* ---------- 디자인 토큰: 색을 변수로 모아두기 ---------- */
 :root {
-  --paper: #fbf9f4;        /* 미색 종이 배경 */
-  --ink: #1c1a17;          /* 잉크 블랙 */
-  --ink-soft: #5c574e;     /* 옅은 잉크 (본문/메타용) */
-  --accent: #1ba2da;       /* 로고와 같은 블루를 포인트로 */
-  --rule: #ddd6c8;         /* 괘선 색 */
+  --ink-soft: #6c675e;
+  --rule: #e4e0d6;
+  --accent: #1a1a1a;      /* Lux의 블랙 포인트와 통일 */
 }
 
 body {
-  background: var(--paper);
-  color: var(--ink);
-  font-family: 'Noto Sans KR', sans-serif;
-  font-weight: 300;
+  background: #fcfbf8;    /* 순백보다 아주 살짝 따뜻한 종이색 */
 }
 
-/* ---------- 제호(로고) ---------- */
-.head-line {
-  margin-top: 2em;
-  display: flex;
-  justify-content: center;
+/* ---------- 헤더 검색 영역 ---------- */
+.search-area {
+  gap: 8px;
+  margin-top: 8px;
+}
+@media (min-width: 992px) {
+  .search-area { margin-top: 0; }
+  #search-input { width: 200px; }
 }
 
-.head-line svg {
-  width: 430px;
-  max-width: 90%;                 /* 모바일에서 로고가 화면을 넘지 않게 */
-}
-
-/* ---------- 메뉴 바: 클래식 신문의 섹션 줄 ---------- */
-.menus {
-  margin-top: 1.4em;
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  border-top: 1px solid var(--ink);       /* 위는 얇게 */
-  border-bottom: 3px double var(--ink);   /* 아래는 이중선 = 신문 시그니처 */
-  padding: 4px 0;
-}
-
-.menus button {
-  border: none;
+/* 카테고리 버튼: Lux nav-link 스타일 재활용 + 커서 */
+#menu-list button {
   background: none;
-  margin: 4px 6px;
-  padding: 6px 4px;
-  font-size: 12px;
-  letter-spacing: 0.14em;         /* 자간을 넓혀 고급스럽게 */
-  text-transform: uppercase;      /* 소문자를 대문자로 표기 */
-  color: var(--ink-soft);
+  border: none;
   cursor: pointer;
-  border-bottom: 2px solid transparent;   /* 호버 밑줄 자리 미리 확보 */
-  transition: color 0.2s, border-color 0.2s;
 }
 
-.menus button:hover {
-  color: var(--accent);
-  border-bottom-color: var(--accent);     /* 호버 시 파란 밑줄 */
+/* ---------- 상태 표시줄 ---------- */
+.news-container { max-width: 1000px; padding-top: 34px; padding-bottom: 50px; }
+
+.status-line {
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  border-bottom: 3px double var(--accent);   /* 신문의 이중 괘선 */
+  padding-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 /* ---------- 뉴스 카드 ---------- */
 .news {
-  margin: 34px 0;
-  padding-bottom: 30px;
-  /* ★ 수정⑥: boder-bottom (오타) → border-bottom */
+  margin: 0;
+  padding: 28px 0;
   border-bottom: 1px solid var(--rule);
 }
 
 .news h2 {
-  font-family: 'Noto Serif KR', serif;    /* 헤드라인은 세리프로 품격 있게 */
-  font-weight: 600;
-  font-size: 21px;
+  font-size: 19px;
   line-height: 1.45;
-  margin: 4px 0 10px;
-  transition: color 0.2s;
+  letter-spacing: 0;        /* Lux 기본 자간이 헤드라인엔 과해서 리셋 */
+  text-transform: none;     /* Lux의 대문자 변환도 제목엔 해제 */
+  margin: 6px 0 10px;
+  transition: opacity 0.2s;
 }
+.news:hover h2 { opacity: 0.6; }   /* 호버 시 은은하게 */
 
-.news:hover h2 { color: var(--accent); }  /* 마우스 올리면 제목이 블루로 */
-
-/* 이미지 액자: 확대되는 부분이 밖으로 안 새게 */
 .news-img-frame {
   overflow: hidden;
-  border-radius: 4px;
-  background: #e9e3d6;            /* 이미지 로딩 전 은은한 자리색 */
+  background: #edeae2;
 }
 
 .news-img-size {
-  /* ★ 수정⑤: max: width 100% (속성명 깨짐) → max-width: 100% */
-  max-width: 100%;
   width: 100%;
-  aspect-ratio: 16 / 10;          /* 사진 비율 통일 → 정돈된 레이아웃 */
-  object-fit: cover;              /* 비율 유지하며 꽉 채우고 넘침은 자르기 */
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
   display: block;
   transition: transform 0.6s ease;
 }
-
-.news:hover .news-img-size {
-  transform: scale(1.04);          /* 호버 시 은은한 줌 인 */
-}
+.news:hover .news-img-size { transform: scale(1.04); }
 
 .news p {
   color: var(--ink-soft);
-  font-size: 15px;
+  font-size: 14px;
   line-height: 1.75;
-  margin: 0 0 12px;
+  margin-bottom: 10px;
 }
 
-/* 출처 · 날짜 메타 줄 */
 .news-meta {
-  font-size: 12px;
-  letter-spacing: 0.1em;
+  font-size: 11px;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--ink-soft);
 }
+.news-meta b { color: var(--accent); font-weight: 600; }
 
-.news-meta b {
-  color: var(--accent);
-  font-weight: 500;
+.empty-note {
+  text-align: center;
+  padding: 60px 0;
+  color: var(--ink-soft);
+}
+
+/* ---------- 페이지네이션 ---------- */
+.pagination { margin-top: 34px; }
+.page-link { cursor: pointer; user-select: none; }
+
+/* ---------- 푸터 ---------- */
+.site-footer {
+  text-align: center;
+  padding: 26px 16px 40px;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  border-top: 1px solid var(--rule);
 }
 
 /* ---------- 모바일 보정 ---------- */
 @media (max-width: 576px) {
-  .news h2 { font-size: 18px; }
+  .news h2 { font-size: 17px; }
   .news-img-frame { margin-bottom: 12px; }
-}
-
-/* =====================================================
-   ★ 추가: 상단 바 (햄버거 + 검색)
-   ===================================================== */
-.top-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 22px;
-  border-bottom: 1px solid var(--rule);
-  position: sticky;              /* 스크롤해도 상단에 고정 */
-  top: 0;
-  background: rgba(251, 249, 244, 0.92);
-  backdrop-filter: blur(6px);    /* 뒤가 살짝 비치는 효과 */
-  z-index: 5;
-}
-
-.icon-button {
-  font-size: 18px;
-  cursor: pointer;
-  color: var(--ink);
-  transition: color 0.2s;
-}
-.icon-button:hover { color: var(--accent); }
-
-.search-wrap { display: flex; align-items: center; gap: 10px; }
-
-#input-area { display: none; }   /* 평소엔 숨김 → 돋보기가 토글 */
-
-#search-input {
-  border: none;
-  border-bottom: 1px solid var(--ink);   /* 밑줄만 있는 미니멀 입력창 */
-  background: transparent;
-  font-size: 14px;
-  padding: 4px 2px;
-  width: 170px;
-  outline: none;
-}
-
-.search-button {
-  border: 1px solid var(--ink);
-  background: var(--ink);
-  color: var(--paper);
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  padding: 5px 14px;
-  cursor: pointer;
-  transition: background 0.2s, border-color 0.2s;
-}
-.search-button:hover { background: var(--accent); border-color: var(--accent); }
-
-/* =====================================================
-   ★ 추가: 사이드 메뉴 — 잉크색 서랍
-   ===================================================== */
-.side-menu {
-  height: 100%;
-  width: 0;                       /* 평소엔 0 = 숨김 */
-  position: fixed;
-  z-index: 10;
-  top: 0;
-  left: 0;
-  background: var(--ink);
-  overflow-x: hidden;
-  transition: width 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-  padding-top: 70px;
-}
-
-.side-menu-list {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.side-menu-list button {
-  margin: 3px;
-  border: none;
-  background: none;
-  width: 170px;
-  padding: 10px 0;
-  color: var(--paper);
-  font-size: 13px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  cursor: pointer;
-  white-space: nowrap;            /* 서랍이 열리는 중에 글자 줄바꿈 방지 */
-  transition: color 0.2s, letter-spacing 0.2s;
-}
-
-.side-menu-list button:hover {
-  color: var(--accent);
-  letter-spacing: 0.22em;         /* 호버 시 자간이 살짝 벌어지는 디테일 */
-}
-
-.side-menu .closebtn {
-  position: absolute;
-  top: 12px;
-  right: 22px;
-  font-size: 34px;
-  border: none;
-  background: none;
-  color: var(--paper);
-  cursor: pointer;
 }
