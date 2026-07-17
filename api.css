@@ -1,5 +1,5 @@
 /* =====================================================
-   Lux TIMES (api.css)
+   NOONA TIMES (api.css)
    Lux 테마 위에 얹는 커스텀 다듬기
    (큰 스타일은 Lux가 담당, 여기선 디테일만!)
    ===================================================== */
@@ -115,4 +115,15 @@ body {
 @media (max-width: 576px) {
   .news h2 { font-size: 17px; }
   .news-img-frame { margin-bottom: 12px; }
+}
+
+/* ---------- 제작자 크레딧 ---------- */
+.footer-credit {
+  margin-top: 6px;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+}
+.footer-credit b {
+  color: var(--accent);
+  font-weight: 600;
 }

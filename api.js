@@ -1,5 +1,5 @@
 // =====================================================
-// Lux TIMES (api.js) - 누나 API 최종 배포판
+// NOONA TIMES (api.js) - 누나 API 최종 배포판
 // API 문서의 3기능 완전 구현:
 //   ① q= 키워드 검색  ② page/pageSize 페이지네이션  ③ category
 // 설계: '현재 상태'(page, filter)를 변수로 기억하고
