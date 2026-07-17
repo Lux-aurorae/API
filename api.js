@@ -6,14 +6,23 @@ const getLatestNews = async () => {
   let url = new URL(
     `https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?q=아이유&pageSize=${PAGE_SIZE}`
   );
-
   const response = await fetch(url);
   const data = await response.json();
-
   newsList = data.articles;
   render();                       // 데이터가 온 '뒤에' 그리기!
   console.log("뉴스 데이터:", newsList);
 };
+
+const getNewsByCategory = async (event)=>{
+  const category = event.target.textContent.toLowerCase();
+consloel.log("category",category);
+const url=new URL
+('https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?q=아이유&category=${category}&pageSize=${PAGE_SIZE}')
+};
+
+resposne= await fetch(url)
+data = await response.json()
+crossOriginIsolated.log("API",data) 
 
 // ---------- 화면 그리기 ----------
 // ★ 수정: map은 따옴표 '밖'(코드), HTML 조각은 '백틱 안'!
