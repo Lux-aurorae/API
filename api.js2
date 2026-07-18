@@ -22,3 +22,5 @@ getNews();
 for (let i = 0; i < 20; i++) {
     console.log("after",i);
 }
+
+// 페이지네이션 1)pagesize: 한번에 받는 데이터 수 / 2) page : 내가 현재 보고 있는 페이지 / 3) totalresults : 전체 데이터가 몇개인지
