@@ -127,3 +127,12 @@ body {
   color: var(--accent);
   font-weight: 600;
 }
+
+/* ---------- 페이지네이션: 현재 페이지 갈색(burlywood) 박스 ---------- */
+.page-item.active .page-link {
+  background-color: burlywood;
+  border-color: burlywood;
+  color: #fff;
+}
+.page-link { color: burlywood; }
+.page-link:hover { color: #8a6d3b; }

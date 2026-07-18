@@ -142,19 +142,34 @@ const render = () => {
 // =====================================================
 const paginationRender = () => {
   const totalPages = Math.ceil(totalResults / PAGE_SIZE);
-  // Math.ceil = 올림. 196개 ÷ 10 = 19.6 → 20페이지 필요!
+  // 질문1의 답: 전체 결과 ÷ 페이지당 개수를 '올림' = 필요한 페이지 수
+  // (196 ÷ 10 = 19.6 → 나머지 6개를 위해 20페이지 필요!)
 
-  const pageGroup = Math.ceil(page / GROUP_SIZE);      // 현재 몇 번째 묶음?
-  let lastPage = pageGroup * GROUP_SIZE;               // 이 묶음의 마지막 번호
-  if (lastPage > totalPages) lastPage = totalPages;    // 전체를 넘으면 잘라내기
+  const pageGroup = Math.ceil(page / GROUP_SIZE);
+  // 질문2의 답: 현재 페이지 ÷ 그룹 크기를 '올림' = 몇 번째 묶음인지
+  // (7페이지 ÷ 5 = 1.4 → 올림 → 2번째 묶음)
+
+  let lastPage = pageGroup * GROUP_SIZE;
+  if (lastPage > totalPages) lastPage = totalPages;   // 전체를 넘으면 잘라내기
   const firstPage = Math.max(1, lastPage - (GROUP_SIZE - 1));
+  // 질문3의 답: 묶음번호 × 그룹크기 = 그 묶음의 '끝' 번호,
+  //             끝 번호 - (그룹크기-1) = 그 묶음의 '첫' 번호
 
-  let paginationHTML = `
-    <li class="page-item ${page === 1 ? "disabled" : ""}">
-      <a class="page-link" onclick="moveToPage(${page - 1})">&lsaquo;</a>
-    </li>
-  `;
+  let paginationHTML = "";
 
+  // ---------- ≪ ‹ : 1페이지가 아닐 때만 표시 (첫 구간에선 숨김) ----------
+  if (page > 1) {
+    paginationHTML += `
+      <li class="page-item">
+        <a class="page-link" onclick="moveToPage(1)">&laquo;</a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" onclick="moveToPage(${page - 1})">&lsaquo;</a>
+      </li>
+    `;
+  }
+
+  // ---------- 페이지 번호 5개 묶음 ----------
   for (let i = firstPage; i <= lastPage; i++) {
     paginationHTML += `
       <li class="page-item ${i === page ? "active" : ""}">
@@ -163,11 +178,18 @@ const paginationRender = () => {
     `;
   }
 
-  paginationHTML += `
-    <li class="page-item ${page === totalPages ? "disabled" : ""}">
-      <a class="page-link" onclick="moveToPage(${page + 1})">&rsaquo;</a>
-    </li>
-  `;
+  // ---------- › ≫ : 마지막 페이지가 아닐 때만 표시 (끝 구간에선 숨김) ----------
+  if (page < totalPages) {
+    paginationHTML += `
+      <li class="page-item">
+        <a class="page-link" onclick="moveToPage(${page + 1})">&rsaquo;</a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" onclick="moveToPage(${totalPages})">&raquo;</a>
+      </li>
+    `;
+    // ★ moveToPage(totalPages) ← 이게 '맨끝 페이지 도달'의 핵심!
+  }
 
   document.getElementById("pagination").innerHTML = paginationHTML;
 };
