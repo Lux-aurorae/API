@@ -24,19 +24,48 @@ const NO_IMAGE_URL =
 // 공통 호출부: 상태(page + currentFilter)로 URL을 조립
 // =====================================================
 const getNews = async () => {
-  const url = new URL(
-    `${BASE_URL}/top-headlines?page=${page}&pageSize=${PAGE_SIZE}${currentFilter}`
-  );
+  try {
+    // ---------- try: 평소의 정상 흐름을 '시도' ----------
+    const url = new URL(
+      `${BASE_URL}/top-headlines?page=${page}&pageSize=${PAGE_SIZE}${currentFilter}`
+    );
 
-  const response = await fetch(url);
-  const data = await response.json();
+    const response = await fetch(url);
+    const data = await response.json();
 
-  newsList = data.articles;
-  totalResults = data.totalResults;   // 페이지네이션 계산의 재료!
+    if (response.status === 200) {
+      // ★ 과제 1: 응답은 성공(200)인데 데이터가 0개인 경우
+      if (data.articles.length === 0) {
+        throw new Error("No matches for your search");
+        // throw = "지금 사고 발생! catch 그물로 던져!" 라고 직접 선언
+      }
+      newsList = data.articles;
+      totalResults = data.totalResults;
+      render();
+      paginationRender();
+      statusRender();
+    } else {
+      // ★ 과제 2: 상태코드가 200이 아닌 경우 (400, 401, 500 ...)
+      //   서버가 보내준 에러 메시지(data.message)를 그대로 던짐
+      throw new Error(data.message);
+    }
 
-  render();
-  paginationRender();
-  statusRender();
+  } catch (error) {
+    // ---------- catch: 어떤 사고든 전부 여기로 모임 ----------
+    // (인터넷 끊김, 0건, 서버 거절 → 처리 창구는 하나!)
+    errorRender(error.message);
+  }
+};
+
+// 에러를 '사용자 화면에' 보여주는 함수 (부트스트랩 alert 빨간 박스)
+const errorRender = (errorMessage) => {
+  document.getElementById("news-board").innerHTML = `
+    <div class="alert alert-danger" role="alert">
+      ${errorMessage}
+    </div>
+  `;
+  document.getElementById("pagination").innerHTML = "";     // 페이지 버튼 정리
+  document.getElementById("status-line").textContent = "";  // 상태줄도 정리
 };
 
 // ---------- ① 최신 뉴스 ----------
@@ -77,12 +106,6 @@ document.getElementById("search-input").addEventListener("keydown", (event) => {
 // 뉴스 그리기 (null 방어 포함)
 // =====================================================
 const render = () => {
-  if (newsList.length === 0) {
-    document.getElementById("news-board").innerHTML =
-      `<p class="empty-note">결과가 없습니다. 다른 검색어를 시도해보세요.</p>`;
-    return;
-  }
-
   const newsHTML = newsList.map(news => `
     <article class="row news">
       <div class="col-lg-4">
