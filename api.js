@@ -83,9 +83,22 @@ const getNewsByCategory = (event) => {
 };
 
 // 카테고리 버튼 전부에 클릭 이벤트 연결
-document.querySelectorAll("#menu-list button").forEach((menu) => {
-  menu.addEventListener("click", getNewsByCategory);
+// 상단 섹션 바 + 사이드 서랍, 두 곳의 버튼 모두에 이벤트 연결
+document.querySelectorAll("#menu-list button, #side-menu-list button").forEach((menu) => {
+  menu.addEventListener("click", (event) => {
+    getNewsByCategory(event);
+    closeNav();                     // 서랍에서 골랐다면 서랍 닫기 (바에선 이미 닫혀있어 무해)
+  });
 });
+
+// ---------- 햄버거 서랍 열고 닫기 ----------
+const openNav = () => {
+  document.getElementById("mySidenav").style.width = "240px";
+};
+
+const closeNav = () => {
+  document.getElementById("mySidenav").style.width = "0";
+};
 
 // ---------- ③ 키워드 검색 ----------
 const searchNews = () => {

@@ -22,9 +22,27 @@
     <link rel="stylesheet" href="api.css" />
   </head>
   <body>
-    <!-- ========== ① 최상단 유틸 바: 날짜 · 검색 ========== -->
+    <!-- ========== 사이드 서랍: 햄버거로 열리는 섹션 목록 ========== -->
+    <div class="side-menu" id="mySidenav">
+      <button class="closebtn" onclick="closeNav()">&times;</button>
+      <p class="side-menu-label">Sections</p>
+      <div class="side-menu-list" id="side-menu-list">
+        <button>business</button>
+        <button>entertainment</button>
+        <button>general</button>
+        <button>health</button>
+        <button>science</button>
+        <button>technology</button>
+        <button>sports</button>
+      </div>
+    </div>
+
+    <!-- ========== ① 최상단 유틸 바: 햄버거 · 날짜 · 검색 ========== -->
     <div class="utility-bar">
-      <span class="utility-date" id="today-date"></span>
+      <div class="utility-left">
+        <i class="fas fa-bars icon-button" onclick="openNav()" title="Sections"></i>
+        <span class="utility-date" id="today-date"></span>
+      </div>
       <div class="search-area">
         <input type="search" id="search-input" placeholder="SEARCH" />
         <button class="search-go" onclick="searchNews()">
