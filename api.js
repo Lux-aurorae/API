@@ -218,5 +218,12 @@ const statusRender = () => {
     `${label} — ${totalResults} articles`;
 };
 
+// ---------- 유틸 바에 오늘 날짜 (브라우저 내장 기능으로!) ----------
+document.getElementById("today-date").textContent =
+  new Date().toLocaleDateString("en-US", {
+    weekday: "long", year: "numeric", month: "long", day: "numeric"
+  });
+// 예: "Saturday, July 18, 2026" — moment 없이도 이 정도는 가능!
+
 // ---------- 시작 ----------
 getLatestNews();

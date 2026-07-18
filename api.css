@@ -1,69 +1,155 @@
 /* =====================================================
-   NOONA TIMES (api.css)
-   Lux 테마 위에 얹는 커스텀 다듬기
-   (큰 스타일은 Lux가 담당, 여기선 디테일만!)
+   THE KOREA TIMES (api.css) — 뉴욕타임즈 스타일
+   공식: 흰 종이 + 검은 잉크 + 세리프 + 가는 괘선(hairline)
+   "고급스러움 = 색을 더하는 게 아니라 절제하는 것"
    ===================================================== */
 
 :root {
-  --ink-soft: #6c675e;
-  --rule: #e4e0d6;
-  --accent: #1a1a1a;      /* Lux의 블랙 포인트와 통일 */
+  --paper: #ffffff;
+  --ink: #121212;          /* NYT의 잉크 블랙 */
+  --ink-soft: #5a5a5a;     /* 요약문/메타 회색 */
+  --rule: #e2e2e2;         /* 가는 괘선 */
+  --serif-en: 'Playfair Display', Georgia, serif;
+  --serif-kr: 'Noto Serif KR', serif;
+  --sans: 'Noto Sans KR', sans-serif;
 }
+
+* { box-sizing: border-box; }
 
 body {
-  background: #fcfbf8;    /* 순백보다 아주 살짝 따뜻한 종이색 */
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-weight: 300;
 }
 
-/* ---------- 헤더 검색 영역 ---------- */
-.search-area {
-  gap: 8px;
-  margin-top: 8px;
-}
-@media (min-width: 992px) {
-  .search-area { margin-top: 0; }
-  #search-input { width: 200px; }
+/* =====================================================
+   ① 최상단 유틸 바 (날짜 · 검색)
+   ===================================================== */
+.utility-bar {
+  max-width: 1150px;
+  margin: 0 auto;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--rule);
 }
 
-/* 카테고리 버튼: Lux nav-link 스타일 재활용 + 커서 */
-#menu-list button {
-  background: none;
+.utility-date {
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+}
+
+.search-area { display: flex; align-items: center; gap: 6px; }
+
+#search-input {
   border: none;
+  border-bottom: 1px solid var(--ink);   /* 밑줄만 있는 미니멀 검색창 */
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  padding: 4px 2px;
+  width: 150px;
+  outline: none;
+  background: transparent;
+}
+#search-input::placeholder { color: #b5b5b5; }
+
+.search-go {
+  border: none;
+  background: none;
   cursor: pointer;
+  font-size: 13px;
+  color: var(--ink);
+}
+.search-go:hover { opacity: 0.55; }
+
+/* =====================================================
+   ② 제호 (Masthead) — 클릭 가능한 신문의 얼굴
+   ===================================================== */
+.masthead {
+  text-align: center;
+  padding: 26px 16px 18px;
 }
 
-/* ---------- 상태 표시줄 ---------- */
-.news-container { max-width: 1000px; padding-top: 34px; padding-bottom: 50px; }
+.masthead-title {
+  font-family: var(--serif-en);
+  font-weight: 800;
+  font-size: clamp(38px, 7vw, 66px);
+  margin: 0;
+  line-height: 1;
+  cursor: pointer;               /* "누를 수 있음"의 신호 */
+  transition: opacity 0.2s;
+  user-select: none;
+}
+.masthead-title:hover { opacity: 0.7; }
+
+/* =====================================================
+   ③ 섹션 내비 — 위아래 가는 괘선 사이 (NYT 시그니처)
+   ===================================================== */
+.section-nav {
+  max-width: 1150px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;               /* 모바일에선 자연스럽게 줄바꿈 */
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--rule);
+  padding: 2px 10px;
+}
+
+.section-nav button {
+  border: none;
+  background: none;
+  padding: 10px 13px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: capitalize;    /* business → Business */
+  color: var(--ink);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.15s;
+}
+.section-nav button:hover { border-bottom-color: var(--ink); }
+
+/* =====================================================
+   ④ 본문
+   ===================================================== */
+.news-container { max-width: 1000px; padding: 26px 20px 50px; }
 
 .status-line {
-  font-size: 12px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
+  font-family: var(--serif-en);
+  font-style: italic;
+  font-size: 14px;
   color: var(--ink-soft);
-  border-bottom: 3px double var(--accent);   /* 신문의 이중 괘선 */
+  border-bottom: 1px solid var(--rule);
   padding-bottom: 10px;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
-/* ---------- 뉴스 카드 ---------- */
+/* ---------- 뉴스 카드: 가는 괘선으로만 구분 ---------- */
 .news {
   margin: 0;
-  padding: 28px 0;
+  padding: 26px 0;
   border-bottom: 1px solid var(--rule);
 }
 
 .news h2 {
-  font-size: 19px;
-  line-height: 1.45;
-  letter-spacing: 0;        /* Lux 기본 자간이 헤드라인엔 과해서 리셋 */
-  text-transform: none;     /* Lux의 대문자 변환도 제목엔 해제 */
-  margin: 6px 0 10px;
-  transition: opacity 0.2s;
+  font-family: var(--serif-kr);
+  font-weight: 700;
+  font-size: 21px;
+  line-height: 1.4;
+  margin: 4px 0 8px;
+  transition: color 0.15s;
 }
-.news:hover h2 { opacity: 0.6; }   /* 호버 시 은은하게 */
+.news:hover h2 { color: #666; }   /* NYT처럼 호버 시 살짝 흐려짐 */
 
 .news-img-frame {
   overflow: hidden;
-  background: #edeae2;
+  background: #f2f2f2;
 }
 
 .news-img-size {
@@ -71,68 +157,64 @@ body {
   aspect-ratio: 16 / 10;
   object-fit: cover;
   display: block;
-  transition: transform 0.6s ease;
+  transition: transform 0.5s ease;
 }
-.news:hover .news-img-size { transform: scale(1.04); }
+.news:hover .news-img-size { transform: scale(1.03); }
 
 .news p {
   color: var(--ink-soft);
-  font-size: 14px;
-  line-height: 1.75;
-  margin-bottom: 10px;
+  font-size: 14.5px;
+  line-height: 1.7;
+  margin: 0 0 10px;
 }
 
 .news-meta {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #9a9a9a;
+}
+.news-meta b { color: var(--ink); font-weight: 600; }
+
+/* =====================================================
+   페이지네이션 — 모노크롬, 현재 페이지는 잉크 블랙 박스
+   (≪ ‹ 1 2 3 4 5 › ≫ / ≫ = 맨끝 페이지 점프)
+   ===================================================== */
+.pagination { margin-top: 30px; }
+
+.page-link {
+  cursor: pointer;
+  user-select: none;
+  color: var(--ink);
+  border-color: var(--rule);
+  font-size: 14px;
+}
+.page-link:hover { color: var(--ink); background: #f4f4f4; }
+
+.page-item.active .page-link {
+  background: var(--ink);        /* 현재 페이지 = 검은 박스 */
+  border-color: var(--ink);
+  color: #fff;
+}
+
+/* =====================================================
+   푸터 (판권란)
+   ===================================================== */
+.site-footer {
+  text-align: center;
+  padding: 22px 16px 40px;
+  border-top: 3px double var(--ink);   /* 마무리 이중 괘선 */
   font-size: 11px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--ink-soft);
 }
-.news-meta b { color: var(--accent); font-weight: 600; }
+.site-footer p { margin: 4px 0; }
+.footer-credit b { color: var(--ink); }
 
-.empty-note {
-  text-align: center;
-  padding: 60px 0;
-  color: var(--ink-soft);
-}
-
-/* ---------- 페이지네이션 ---------- */
-.pagination { margin-top: 34px; }
-.page-link { cursor: pointer; user-select: none; }
-
-/* ---------- 푸터 ---------- */
-.site-footer {
-  text-align: center;
-  padding: 26px 16px 40px;
-  font-size: 11px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--ink-soft);
-  border-top: 1px solid var(--rule);
-}
-
-/* ---------- 모바일 보정 ---------- */
+/* ---------- 모바일 ---------- */
 @media (max-width: 576px) {
-  .news h2 { font-size: 17px; }
+  .utility-date { display: none; }
+  .news h2 { font-size: 18px; }
   .news-img-frame { margin-bottom: 12px; }
 }
-
-/* ---------- 제작자 크레딧 ---------- */
-.footer-credit {
-  margin-top: 6px;
-  font-size: 11px;
-  letter-spacing: 0.2em;
-}
-.footer-credit b {
-  color: var(--accent);
-  font-weight: 600;
-}
-
-/* ---------- 페이지네이션: 현재 페이지 갈색(burlywood) 박스 ---------- */
-.page-item.active .page-link {
-  background-color: burlywood;
-  border-color: burlywood;
-  color: #fff;
-}
-.page-link { color: burlywood; }
-.page-link:hover { color: #8a6d3b; }
